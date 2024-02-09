@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import TypingEffect from "react-typing-effect";
 
 const FileUploadForm = () => {
   const [file, setFile] = useState(null);
@@ -19,7 +20,7 @@ const FileUploadForm = () => {
     formData.append("pdfFile", file);
 
     await axios
-      .post("http://localhost:3001/upload", formData, {
+      .post("http://192.168.1.27:3001/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -51,7 +52,12 @@ const FileUploadForm = () => {
         <div className="chat-container">
           {messages.map((message, index) => (
             <div key={index} className={`message ${message.type}`}>
-              {message}
+              <TypingEffect
+                text={message}
+                speed={20}
+                loop={false}
+                eraseDelay={999999999}
+              />
             </div>
           ))}
         </div>
@@ -61,6 +67,7 @@ const FileUploadForm = () => {
         <input
           className="password_input"
           type="password"
+          id="myInput"
           placeholder="Enter your file password..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
@@ -69,6 +76,7 @@ const FileUploadForm = () => {
         <input
           className="prompt_input"
           type="prompt"
+          id="myInput"
           placeholder="Enter text which you want to get data.."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
