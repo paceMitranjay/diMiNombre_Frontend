@@ -8,6 +8,7 @@ const FileUploadForm = () => {
   const [file, setFile] = useState(null);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -18,6 +19,8 @@ const FileUploadForm = () => {
 
     const formData = new FormData();
     formData.append("pdfFile", file);
+    formData.append("filePassword", password);
+    formData.append("text", inputText);
 
     await axios
       .post("http://192.168.1.27:3001/upload", formData, {
@@ -30,9 +33,15 @@ const FileUploadForm = () => {
         setMessages((prev) => {
           return [...prev, res.data.result];
         });
+        setFile(null);
+        setInputText("");
+        setPassword("");
       })
       .catch((error) => {
         console.error("Error uploading file:", error);
+        setFile(null);
+        setInputText("");
+        setPassword("");
       });
   };
   useEffect(() => {}, [messages]);
@@ -69,9 +78,9 @@ const FileUploadForm = () => {
           type="password"
           id="myInput"
           placeholder="Enter your file password..."
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          // onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
         />
         <input
           className="prompt_input"
@@ -80,10 +89,24 @@ const FileUploadForm = () => {
           placeholder="Enter text which you want to get data.."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
+          // onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
         />
 
-        <button onClick={handleSubmit}>Send</button>
+        <button
+          onClick={
+            file == null || password == "" || inputText == ""
+              ? null
+              : handleSubmit
+          }
+          style={{
+            cursor:
+              file == null || password == "" || inputText == ""
+                ? "no-drop"
+                : "pointer",
+          }}
+        >
+          Send
+        </button>
       </div>
     </div>
   );
