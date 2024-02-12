@@ -19,29 +19,43 @@ const FileUploadForm = () => {
 
     const formData = new FormData();
     formData.append("pdfFile", file);
-    formData.append("filePassword", password);
-    formData.append("text", inputText);
+    formData.append("password", password);
+    // formData.append("query", inputText);
 
     await axios
-      .post("http://192.168.1.27:3001/upload", formData, {
+      .post(" http://localhost:3001/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then((res) => {
+      .then(async (res) => {
         console.log(res.data.result);
-        setMessages((prev) => {
-          return [...prev, res.data.result];
-        });
-        setFile(null);
-        setInputText("");
-        setPassword("");
+        // const formData2 = new FormData();
+        // formData2.append("prompt", res.data.result);
+        const val = {
+          data: res.data.result,
+          prompt: inputText,
+        };
+
+        await axios
+          .post(" http://localhost:3001/ai", val)
+          .then((response) => {
+            setMessages((prev) => {
+              return [...prev, response.data.result];
+            });
+          })
+          .catch((err) => {
+            console.error("Error getting open api data", err);
+          });
+        // setFile(null);
+        // setInputText("");
+        // setPassword("");
       })
       .catch((error) => {
         console.error("Error uploading file:", error);
-        setFile(null);
-        setInputText("");
-        setPassword("");
+        // setFile(null);
+        // setInputText("");
+        // setPassword("");
       });
   };
   useEffect(() => {}, [messages]);
@@ -93,20 +107,37 @@ const FileUploadForm = () => {
         />
 
         <button
-          onClick={
-            file == null || password == "" || inputText == ""
-              ? null
-              : handleSubmit
-          }
-          style={{
-            cursor:
-              file == null || password == "" || inputText == ""
-                ? "no-drop"
-                : "pointer",
-          }}
+          // onClick={
+          //   file == null || password == "" || inputText == ""
+          //     ? null
+          //     : handleSubmit
+          // }
+          // style={{
+          //   cursor:
+          //     file == null || password == "" || inputText == ""
+          //       ? "no-drop"
+          //       : "pointer",
+          // }}
+          onClick={handleSubmit}
         >
           Send
         </button>
+        {/* <button
+          // onClick={
+          //   file == null || password == "" || inputText == ""
+          //     ? null
+          //     : handleSubmit
+          // }
+          // style={{
+          //   cursor:
+          //     file == null || password == "" || inputText == ""
+          //       ? "no-drop"
+          //       : "pointer",
+          // }}
+          onClick={handleSubmit2}
+        >
+          kkkkkkkkkkkkk
+        </button> */}
       </div>
     </div>
   );
